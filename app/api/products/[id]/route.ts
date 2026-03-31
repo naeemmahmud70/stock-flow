@@ -5,20 +5,41 @@ import { logActivity } from "@/lib/logger";
 import { syncRestockQueue } from "@/lib/stock";
 import Product from "@/models/Product";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
-  const product = await Product.findById(params.id).populate("category", "name");
-  if (!product) return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 });
+  const product = await Product.findById(params.id).populate(
+    "category",
+    "name",
+  );
+  if (!product)
+    return NextResponse.json(
+      { success: false, error: "Product not found" },
+      { status: 404 },
+    );
 
   return NextResponse.json({ success: true, data: product });
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
   const body = await req.json();
@@ -28,10 +49,20 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     else if (body.status !== "out_of_stock") body.status = "active";
   }
 
-  const product = await Product.findByIdAndUpdate(params.id, body, { new: true }).populate("category", "name");
-  if (!product) return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 });
+  const product = await Product.findByIdAndUpdate(params.id, body, {
+    new: true,
+  }).populate("category", "name");
+  if (!product)
+    return NextResponse.json(
+      { success: false, error: "Product not found" },
+      { status: 404 },
+    );
 
-  await syncRestockQueue(product._id.toString(), product.stock, product.minStockThreshold);
+  await syncRestockQueue(
+    product._id.toString(),
+    product.stock,
+    product.minStockThreshold,
+  );
 
   await logActivity({
     action: `Product "${product.name}" updated`,
@@ -45,13 +76,24 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json({ success: true, data: product });
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
   const product = await Product.findByIdAndDelete(params.id);
-  if (!product) return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 });
+  if (!product)
+    return NextResponse.json(
+      { success: false, error: "Product not found" },
+      { status: 404 },
+    );
 
   await logActivity({
     action: `Product "${product.name}" deleted`,

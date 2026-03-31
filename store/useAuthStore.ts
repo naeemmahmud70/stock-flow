@@ -9,7 +9,12 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<boolean>;
-  signup: (name: string, email: string, password: string, role?: string) => Promise<boolean>;
+  signup: (
+    name: string,
+    email: string,
+    password: string,
+    role?: string,
+  ) => Promise<boolean>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -36,7 +41,12 @@ export const useAuthStore = create<AuthState>()(
             set({ error: data.error, isLoading: false });
             return false;
           }
-          set({ user: data.data.user, token: data.data.token, isAuthenticated: true, isLoading: false });
+          set({
+            user: data.data.user,
+            token: data.data.token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
           return true;
         } catch {
           set({ error: "Network error. Please try again.", isLoading: false });
@@ -57,7 +67,12 @@ export const useAuthStore = create<AuthState>()(
             set({ error: data.error, isLoading: false });
             return false;
           }
-          set({ user: data.data.user, token: data.data.token, isAuthenticated: true, isLoading: false });
+          set({
+            user: data.data.user,
+            token: data.data.token,
+            isAuthenticated: true,
+            isLoading: false,
+          });
           return true;
         } catch {
           set({ error: "Network error. Please try again.", isLoading: false });
@@ -83,6 +98,6 @@ export const useAuthStore = create<AuthState>()(
         token: state.token,
         isAuthenticated: state.isAuthenticated,
       }),
-    }
-  )
+    },
+  ),
 );

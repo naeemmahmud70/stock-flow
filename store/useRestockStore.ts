@@ -7,7 +7,10 @@ interface RestockState {
   isLoading: boolean;
   error: string | null;
   fetchQueue: () => Promise<void>;
-  restockProduct: (productId: string, addStock: number) => Promise<{ success: boolean; error?: string }>;
+  restockProduct: (
+    productId: string,
+    addStock: number,
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 export const useRestockStore = create<RestockState>((set) => ({

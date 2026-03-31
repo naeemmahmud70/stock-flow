@@ -8,7 +8,11 @@ import Product from "@/models/Product";
 
 export async function GET(req: NextRequest) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
   const items = await RestockQueue.find()
@@ -20,28 +24,43 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
   const { productId, addStock } = await req.json();
 
   if (!productId || typeof addStock !== "number" || addStock < 1) {
-    return NextResponse.json({ success: false, error: "Invalid input" }, { status: 400 });
+    return NextResponse.json(
+      { success: false, error: "Invalid input" },
+      { status: 400 },
+    );
   }
 
   const product = await Product.findByIdAndUpdate(
     productId,
     { $inc: { stock: addStock } },
-    { new: true }
+    { new: true },
   );
 
-  if (!product) return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 });
+  if (!product)
+    return NextResponse.json(
+      { success: false, error: "Product not found" },
+      { status: 404 },
+    );
 
   if (product.stock > 0 && product.status === "out_of_stock") {
     await Product.findByIdAndUpdate(productId, { status: "active" });
   }
 
-  await syncRestockQueue(product._id.toString(), product.stock, product.minStockThreshold);
+  await syncRestockQueue(
+    product._id.toString(),
+    product.stock,
+    product.minStockThreshold,
+  );
 
   await logActivity({
     action: `Stock updated for "${product.name}" (+${addStock} units)`,

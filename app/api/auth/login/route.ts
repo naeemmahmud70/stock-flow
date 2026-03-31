@@ -14,18 +14,27 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const parsed = loginSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ success: false, error: "Invalid email or password format" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: "Invalid email or password format" },
+        { status: 400 },
+      );
     }
 
     await connectDB();
     const user = await User.findOne({ email: parsed.data.email });
     if (!user) {
-      return NextResponse.json({ success: false, error: "Invalid credentials" }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: "Invalid credentials" },
+        { status: 401 },
+      );
     }
 
     const isMatch = await user.comparePassword(parsed.data.password);
     if (!isMatch) {
-      return NextResponse.json({ success: false, error: "Invalid credentials" }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: "Invalid credentials" },
+        { status: 401 },
+      );
     }
 
     const token = signToken({
@@ -39,7 +48,12 @@ export async function POST(req: NextRequest) {
       success: true,
       data: {
         token,
-        user: { _id: user._id, name: user.name, email: user.email, role: user.role },
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
       },
     });
 
@@ -47,6 +61,9 @@ export async function POST(req: NextRequest) {
     return res;
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ success: false, error: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "Server error" },
+      { status: 500 },
+    );
   }
 }

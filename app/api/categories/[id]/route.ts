@@ -4,14 +4,27 @@ import { getAuthUser } from "@/lib/auth";
 import { logActivity } from "@/lib/logger";
 import Category from "@/models/Category";
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
   const body = await req.json();
-  const category = await Category.findByIdAndUpdate(params.id, body, { new: true });
-  if (!category) return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
+  const category = await Category.findByIdAndUpdate(params.id, body, {
+    new: true,
+  });
+  if (!category)
+    return NextResponse.json(
+      { success: false, error: "Not found" },
+      { status: 404 },
+    );
 
   await logActivity({
     action: `Category "${category.name}" updated`,
@@ -24,13 +37,24 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json({ success: true, data: category });
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
   const category = await Category.findByIdAndDelete(params.id);
-  if (!category) return NextResponse.json({ success: false, error: "Not found" }, { status: 404 });
+  if (!category)
+    return NextResponse.json(
+      { success: false, error: "Not found" },
+      { status: 404 },
+    );
 
   await logActivity({
     action: `Category "${category.name}" deleted`,

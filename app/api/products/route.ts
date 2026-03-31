@@ -19,7 +19,11 @@ const productSchema = z.object({
 
 export async function GET(req: NextRequest) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
   const { searchParams } = new URL(req.url);
@@ -52,14 +56,18 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   const body = await req.json();
   const parsed = productSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { success: false, error: parsed.error.errors[0]?.message },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -77,7 +85,7 @@ export async function POST(req: NextRequest) {
     await syncRestockQueue(
       product._id.toString(),
       product.stock,
-      product.minStockThreshold
+      product.minStockThreshold,
     );
   }
 

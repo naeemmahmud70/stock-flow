@@ -1,5 +1,3 @@
-import { OrderItem } from "@/types";
-
 export interface ConflictResult {
   ok: boolean;
   message?: string;

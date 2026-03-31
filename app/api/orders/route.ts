@@ -22,7 +22,11 @@ const orderSchema = z.object({
 
 export async function GET(req: NextRequest) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
   const { searchParams } = new URL(req.url);
@@ -38,8 +42,10 @@ export async function GET(req: NextRequest) {
   if (search) query.$text = { $search: search };
   if (dateFrom || dateTo) {
     query.createdAt = {};
-    if (dateFrom) (query.createdAt as Record<string, unknown>).$gte = new Date(dateFrom);
-    if (dateTo) (query.createdAt as Record<string, unknown>).$lte = new Date(dateTo);
+    if (dateFrom)
+      (query.createdAt as Record<string, unknown>).$gte = new Date(dateFrom);
+    if (dateTo)
+      (query.createdAt as Record<string, unknown>).$lte = new Date(dateTo);
   }
 
   const [orders, total] = await Promise.all([
@@ -60,21 +66,28 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   const body = await req.json();
   const parsed = orderSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { success: false, error: parsed.error.errors[0]?.message },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   // Conflict: duplicate products
   const dupCheck = detectDuplicateProducts(parsed.data.items);
   if (!dupCheck.ok) {
-    return NextResponse.json({ success: false, error: dupCheck.message }, { status: 400 });
+    return NextResponse.json(
+      { success: false, error: dupCheck.message },
+      { status: 400 },
+    );
   }
 
   await connectDB();
@@ -88,19 +101,25 @@ export async function POST(req: NextRequest) {
     if (!product) {
       return NextResponse.json(
         { success: false, error: `Product not found: ${item.product}` },
-        { status: 404 }
+        { status: 404 },
       );
     }
     if (product.status !== "active") {
       return NextResponse.json(
-        { success: false, error: `"${product.name}" is currently unavailable.` },
-        { status: 400 }
+        {
+          success: false,
+          error: `"${product.name}" is currently unavailable.`,
+        },
+        { status: 400 },
       );
     }
 
     const stockCheck = await checkStock(item.product, item.quantity);
     if (!stockCheck.ok) {
-      return NextResponse.json({ success: false, error: stockCheck.message }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: stockCheck.message },
+        { status: 400 },
+      );
     }
 
     orderItems.push({
@@ -132,7 +151,11 @@ export async function POST(req: NextRequest) {
     entityId: order._id.toString(),
     userId: user.userId,
     userName: user.name,
-    metadata: { customerName: order.customerName, totalPrice, items: orderItems.length },
+    metadata: {
+      customerName: order.customerName,
+      totalPrice,
+      items: orderItems.length,
+    },
   });
 
   return NextResponse.json({ success: true, data: order }, { status: 201 });

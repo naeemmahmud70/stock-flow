@@ -4,12 +4,12 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { Bell } from "lucide-react";
 
 const PAGE_TITLES: Record<string, string> = {
-  "/dashboard":            "Dashboard",
-  "/dashboard/orders":     "Orders",
-  "/dashboard/products":   "Products",
+  "/dashboard": "Dashboard",
+  "/dashboard/orders": "Orders",
+  "/dashboard/products": "Products",
   "/dashboard/categories": "Categories",
-  "/dashboard/restock":    "Restock Queue",
-  "/dashboard/activity":   "Activity Log",
+  "/dashboard/restock": "Restock Queue",
+  "/dashboard/activity": "Activity Log",
 };
 
 export default function Topbar() {
@@ -23,7 +23,10 @@ export default function Topbar() {
         <h1 className="text-base font-semibold text-slate-900">{title}</h1>
         <p className="text-xs text-slate-400">
           {new Date().toLocaleDateString("en-US", {
-            weekday: "long", year: "numeric", month: "long", day: "numeric",
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
           })}
         </p>
       </div>

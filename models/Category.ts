@@ -11,10 +11,11 @@ const CategorySchema = new Schema<ICategory>(
     name: { type: String, required: true, trim: true, unique: true },
     description: { type: String, trim: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Category: Model<ICategory> =
-  mongoose.models.Category || mongoose.model<ICategory>("Category", CategorySchema);
+  mongoose.models.Category ||
+  mongoose.model<ICategory>("Category", CategorySchema);
 
 export default Category;

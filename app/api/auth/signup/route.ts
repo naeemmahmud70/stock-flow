@@ -17,15 +17,21 @@ export async function POST(req: NextRequest) {
     const parsed = signupSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: parsed.error.errors[0]?.message || "Invalid input" },
-        { status: 400 }
+        {
+          success: false,
+          error: parsed.error.errors[0]?.message || "Invalid input",
+        },
+        { status: 400 },
       );
     }
 
     await connectDB();
     const existing = await User.findOne({ email: parsed.data.email });
     if (existing) {
-      return NextResponse.json({ success: false, error: "Email already registered" }, { status: 409 });
+      return NextResponse.json(
+        { success: false, error: "Email already registered" },
+        { status: 409 },
+      );
     }
 
     const user = await User.create(parsed.data);
@@ -41,16 +47,24 @@ export async function POST(req: NextRequest) {
         success: true,
         data: {
           token,
-          user: { _id: user._id, name: user.name, email: user.email, role: user.role },
+          user: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
 
     setAuthCookie(res, token);
     return res;
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ success: false, error: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "Server error" },
+      { status: 500 },
+    );
   }
 }

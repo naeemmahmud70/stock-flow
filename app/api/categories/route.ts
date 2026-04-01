@@ -12,7 +12,11 @@ const categorySchema = z.object({
 
 export async function GET(req: NextRequest) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
   await connectDB();
   const categories = await Category.find().sort({ name: 1 });
   return NextResponse.json({ success: true, data: categories });
@@ -20,21 +24,30 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   const body = await req.json();
   const parsed = categorySchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { success: false, error: parsed.error.errors[0]?.message },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   await connectDB();
-  const existing = await Category.findOne({ name: new RegExp(`^${parsed.data.name}$`, "i") });
+  const existing = await Category.findOne({
+    name: new RegExp(`^${parsed.data.name}$`, "i"),
+  });
   if (existing) {
-    return NextResponse.json({ success: false, error: "Category already exists" }, { status: 409 });
+    return NextResponse.json(
+      { success: false, error: "Category already exists" },
+      { status: 409 },
+    );
   }
 
   const category = await Category.create(parsed.data);

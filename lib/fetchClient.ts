@@ -1,13 +1,8 @@
-/**
- * Reads the JWT from Zustand persisted localStorage and sends it as
- * Authorization header on every API request — ensures middleware always
- * receives credentials even on hard refresh before cookie is established.
- */
 export function authFetch(url: string, opts: RequestInit = {}): Promise<Response> {
   let token: string | null = null;
 
   try {
-    const raw = localStorage.getItem("sf-auth"); // must match persist name in useAuthStore
+    const raw = localStorage.getItem("sf-auth"); 
     if (raw) {
       token = JSON.parse(raw)?.state?.token ?? null;
     }

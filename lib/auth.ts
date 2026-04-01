@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
-// Unique to this app — rejects tokens signed by other projects using the same secret
 const JWT_ISSUER = "stockflow";
 const JWT_AUDIENCE = "stockflow-app";
 
@@ -45,7 +44,6 @@ export function getAuthUser(req: NextRequest): JwtPayload | null {
   return verifyToken(token);
 }
 
-/** Attach Set-Cookie to a NextResponse — the only correct way inside Route Handlers */
 export function setAuthCookie(res: NextResponse, token: string): void {
   res.cookies.set("sf_token", token, {
     httpOnly: true,
@@ -61,14 +59,13 @@ export function clearAuthCookie(res: NextResponse): void {
 }
 export function getUserToken(): String | null {
   try {
-    const raw = localStorage.getItem("sf-auth"); // must match persist name in useAuthStore
+    const raw = localStorage.getItem("sf-auth"); 
     if (raw) {
       const token = JSON.parse(raw)?.state?.token ?? null;
       return token;
     }
     return null;
   } catch {
-    // SSR or localStorage unavailable
     return null;
   }
 }

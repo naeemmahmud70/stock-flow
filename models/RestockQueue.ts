@@ -10,13 +10,22 @@ export interface IRestockItem extends Document {
 
 const RestockSchema = new Schema<IRestockItem>(
   {
-    product: { type: Schema.Types.ObjectId, ref: "Product", required: true, unique: true },
+    product: {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+      unique: true,
+    },
     currentStock: { type: Number, required: true, min: 0 },
     threshold: { type: Number, required: true, min: 0 },
-    priority: { type: String, enum: ["high", "medium", "low"], default: "medium" },
+    priority: {
+      type: String,
+      enum: ["high", "medium", "low"],
+      default: "medium",
+    },
     addedAt: { type: Date, default: Date.now },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 RestockSchema.index({ priority: 1, currentStock: 1 });

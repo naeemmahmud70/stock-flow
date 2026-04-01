@@ -24,10 +24,7 @@ export async function middleware(req: NextRequest) {
   const token =
     req.cookies.get("sf_token")?.value ||
     req.headers.get("authorization")?.replace("Bearer ", "");
-  console.log("token", token);
-  console.log("path", pathname);
-  console.log("isDashboard", isDashboard);
-  console.log("isApi", isApi);
+
   if (!token) {
     if (isApi) {
       return NextResponse.json(
@@ -46,7 +43,7 @@ export async function middleware(req: NextRequest) {
     name: string;
     role: string;
   }>(token, secret);
-  console.log("verify", payload);
+
   if (!payload) {
     if (isApi) {
       return NextResponse.json(

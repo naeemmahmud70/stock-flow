@@ -5,7 +5,11 @@ import ActivityLog from "@/models/ActivityLog";
 
 export async function GET(req: NextRequest) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
   const { searchParams } = new URL(req.url);

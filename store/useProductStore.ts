@@ -16,7 +16,10 @@ interface ProductState {
   createProduct: (data: Partial<Product>) => Promise<boolean>;
   updateProduct: (id: string, data: Partial<Product>) => Promise<boolean>;
   deleteProduct: (id: string) => Promise<boolean>;
-  createCategory: (data: { name: string; description?: string }) => Promise<boolean>;
+  createCategory: (data: {
+    name: string;
+    description?: string;
+  }) => Promise<boolean>;
   setFilters: (filters: Partial<ProductState["filters"]>) => void;
   setPage: (page: number) => void;
 }
@@ -35,17 +38,23 @@ export const useProductStore = create<ProductState>((set, get) => ({
     set({ isLoading: true, error: null });
     const { filters, page } = get();
     const qs = new URLSearchParams({
-      page: String(page), limit: "20",
-      ...(filters.search   && { search: filters.search }),
+      page: String(page),
+      limit: "20",
+      ...(filters.search && { search: filters.search }),
       ...(filters.category && { category: filters.category }),
-      ...(filters.status   && { status: filters.status }),
+      ...(filters.status && { status: filters.status }),
       ...params,
     });
     try {
       const res = await authFetch(`/api/products?${qs}`);
       const data = await res.json();
       if (data.success) {
-        set({ products: data.data, total: data.pagination.total, pages: data.pagination.pages, isLoading: false });
+        set({
+          products: data.data,
+          total: data.pagination.total,
+          pages: data.pagination.pages,
+          isLoading: false,
+        });
       } else {
         set({ error: data.error, isLoading: false });
       }
@@ -63,9 +72,15 @@ export const useProductStore = create<ProductState>((set, get) => ({
   createProduct: async (productData) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await authFetch("/api/products", { method: "POST", body: JSON.stringify(productData) });
+      const res = await authFetch("/api/products", {
+        method: "POST",
+        body: JSON.stringify(productData),
+      });
       const data = await res.json();
-      if (data.success) { await get().fetchProducts(); return true; }
+      if (data.success) {
+        await get().fetchProducts();
+        return true;
+      }
       set({ error: data.error, isLoading: false });
       return false;
     } catch {
@@ -77,10 +92,16 @@ export const useProductStore = create<ProductState>((set, get) => ({
   updateProduct: async (id, productData) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await authFetch(`/api/products/${id}`, { method: "PUT", body: JSON.stringify(productData) });
+      const res = await authFetch(`/api/products/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(productData),
+      });
       const data = await res.json();
       if (data.success) {
-        set((s) => ({ products: s.products.map((p) => (p._id === id ? data.data : p)), isLoading: false }));
+        set((s) => ({
+          products: s.products.map((p) => (p._id === id ? data.data : p)),
+          isLoading: false,
+        }));
         return true;
       }
       set({ error: data.error, isLoading: false });
@@ -95,21 +116,35 @@ export const useProductStore = create<ProductState>((set, get) => ({
     try {
       const res = await authFetch(`/api/products/${id}`, { method: "DELETE" });
       const data = await res.json();
-      if (data.success) { set((s) => ({ products: s.products.filter((p) => p._id !== id) })); return true; }
+      if (data.success) {
+        set((s) => ({ products: s.products.filter((p) => p._id !== id) }));
+        return true;
+      }
       return false;
-    } catch { return false; }
+    } catch {
+      return false;
+    }
   },
 
   createCategory: async (catData) => {
     try {
-      const res = await authFetch("/api/categories", { method: "POST", body: JSON.stringify(catData) });
+      const res = await authFetch("/api/categories", {
+        method: "POST",
+        body: JSON.stringify(catData),
+      });
       const data = await res.json();
-      if (data.success) { await get().fetchCategories(); return true; }
+      if (data.success) {
+        await get().fetchCategories();
+        return true;
+      }
       set({ error: data.error });
       return false;
-    } catch { return false; }
+    } catch {
+      return false;
+    }
   },
 
-  setFilters: (filters) => set((s) => ({ filters: { ...s.filters, ...filters }, page: 1 })),
+  setFilters: (filters) =>
+    set((s) => ({ filters: { ...s.filters, ...filters }, page: 1 })),
   setPage: (page) => set({ page }),
 }));

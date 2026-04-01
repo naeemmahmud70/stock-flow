@@ -31,7 +31,14 @@ const OrderSchema = new Schema<IOrder>(
     orderNumber: { type: String, unique: true },
     customerName: { type: String, required: true, trim: true },
     customerEmail: { type: String, trim: true, lowercase: true },
-    items: { type: [OrderItemSchema], required: true, validate: [(v: IOrderItem[]) => v.length > 0, "Order must have at least one item"] },
+    items: {
+      type: [OrderItemSchema],
+      required: true,
+      validate: [
+        (v: IOrderItem[]) => v.length > 0,
+        "Order must have at least one item",
+      ],
+    },
     totalPrice: { type: Number, required: true, min: 0 },
     status: {
       type: String,
@@ -40,7 +47,7 @@ const OrderSchema = new Schema<IOrder>(
     },
     notes: { type: String, trim: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 OrderSchema.pre("save", async function (next) {

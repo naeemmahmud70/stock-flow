@@ -7,7 +7,11 @@ import RestockQueue from "@/models/RestockQueue";
 
 export async function GET(req: NextRequest) {
   const user = getAuthUser(req);
-  if (!user) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user)
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   await connectDB();
 
@@ -29,7 +33,12 @@ export async function GET(req: NextRequest) {
     Order.countDocuments({ status: "pending" }),
     Order.countDocuments({ status: { $in: ["delivered", "shipped"] } }),
     Order.aggregate([
-      { $match: { createdAt: { $gte: startOfDay }, status: { $ne: "cancelled" } } },
+      {
+        $match: {
+          createdAt: { $gte: startOfDay },
+          status: { $ne: "cancelled" },
+        },
+      },
       { $group: { _id: null, total: { $sum: "$totalPrice" } } },
     ]),
     RestockQueue.countDocuments(),
@@ -40,9 +49,7 @@ export async function GET(req: NextRequest) {
       .sort({ createdAt: -1 })
       .limit(5)
       .populate("items.product", "name"),
-    Order.aggregate([
-      { $group: { _id: "$status", count: { $sum: 1 } } },
-    ]),
+    Order.aggregate([{ $group: { _id: "$status", count: { $sum: 1 } } }]),
     Order.aggregate([
       {
         $match: {
@@ -72,7 +79,11 @@ export async function GET(req: NextRequest) {
       productSummary,
       recentOrders,
       ordersByStatus,
-      revenueByDay: revenueByDay.map((d) => ({ date: d._id, revenue: d.revenue, orders: d.orders })),
+      revenueByDay: revenueByDay.map((d) => ({
+        date: d._id,
+        revenue: d.revenue,
+        orders: d.orders,
+      })),
     },
   });
 }

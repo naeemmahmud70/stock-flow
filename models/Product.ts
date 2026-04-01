@@ -20,11 +20,15 @@ const ProductSchema = new Schema<IProduct>(
     price: { type: Number, required: true, min: 0 },
     stock: { type: Number, required: true, min: 0, default: 0 },
     minStockThreshold: { type: Number, required: true, min: 0, default: 5 },
-    status: { type: String, enum: ["active", "out_of_stock"], default: "active" },
+    status: {
+      type: String,
+      enum: ["active", "out_of_stock"],
+      default: "active",
+    },
     sku: { type: String, trim: true, sparse: true },
     description: { type: String, trim: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 ProductSchema.index({ name: "text", sku: "text" });

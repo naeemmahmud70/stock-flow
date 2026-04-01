@@ -17,7 +17,10 @@ interface OrderState {
     items: { product: string; quantity: number }[];
     notes?: string;
   }) => Promise<{ success: boolean; error?: string }>;
-  updateOrderStatus: (id: string, status: string) => Promise<{ success: boolean; error?: string }>;
+  updateOrderStatus: (
+    id: string,
+    status: string,
+  ) => Promise<{ success: boolean; error?: string }>;
   deleteOrder: (id: string) => Promise<boolean>;
   setFilters: (f: Partial<OrderState["filters"]>) => void;
   setPage: (p: number) => void;
@@ -37,17 +40,23 @@ export const useOrderStore = create<OrderState>((set, get) => ({
     set({ isLoading: true, error: null });
     const { filters, page } = get();
     const qs = new URLSearchParams({
-      page: String(page), limit: "20",
-      ...(filters.status   && { status: filters.status }),
-      ...(filters.search   && { search: filters.search }),
+      page: String(page),
+      limit: "20",
+      ...(filters.status && { status: filters.status }),
+      ...(filters.search && { search: filters.search }),
       ...(filters.dateFrom && { dateFrom: filters.dateFrom }),
-      ...(filters.dateTo   && { dateTo: filters.dateTo }),
+      ...(filters.dateTo && { dateTo: filters.dateTo }),
     });
     try {
       const res = await authFetch(`/api/orders?${qs}`);
       const data = await res.json();
       if (data.success) {
-        set({ orders: data.data, total: data.pagination.total, pages: data.pagination.pages, isLoading: false });
+        set({
+          orders: data.data,
+          total: data.pagination.total,
+          pages: data.pagination.pages,
+          isLoading: false,
+        });
       } else {
         set({ error: data.error, isLoading: false });
       }
@@ -59,9 +68,16 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   createOrder: async (orderData) => {
     set({ isLoading: true, error: null });
     try {
-      const res = await authFetch("/api/orders", { method: "POST", body: JSON.stringify(orderData) });
+      const res = await authFetch("/api/orders", {
+        method: "POST",
+        body: JSON.stringify(orderData),
+      });
       const data = await res.json();
-      if (data.success) { await get().fetchOrders(); set({ isLoading: false }); return { success: true }; }
+      if (data.success) {
+        await get().fetchOrders();
+        set({ isLoading: false });
+        return { success: true };
+      }
       set({ error: data.error, isLoading: false });
       return { success: false, error: data.error };
     } catch {
@@ -72,23 +88,35 @@ export const useOrderStore = create<OrderState>((set, get) => ({
 
   updateOrderStatus: async (id, status) => {
     try {
-      const res = await authFetch(`/api/orders/${id}`, { method: "PUT", body: JSON.stringify({ status }) });
+      const res = await authFetch(`/api/orders/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ status }),
+      });
       const data = await res.json();
       if (data.success) {
-        set((s) => ({ orders: s.orders.map((o) => (o._id === id ? data.data : o)) }));
+        set((s) => ({
+          orders: s.orders.map((o) => (o._id === id ? data.data : o)),
+        }));
         return { success: true };
       }
       return { success: false, error: data.error };
-    } catch { return { success: false, error: "Network error" }; }
+    } catch {
+      return { success: false, error: "Network error" };
+    }
   },
 
   deleteOrder: async (id) => {
     try {
       const res = await authFetch(`/api/orders/${id}`, { method: "DELETE" });
       const data = await res.json();
-      if (data.success) { set((s) => ({ orders: s.orders.filter((o) => o._id !== id) })); return true; }
+      if (data.success) {
+        set((s) => ({ orders: s.orders.filter((o) => o._id !== id) }));
+        return true;
+      }
       return false;
-    } catch { return false; }
+    } catch {
+      return false;
+    }
   },
 
   setFilters: (f) => set((s) => ({ filters: { ...s.filters, ...f }, page: 1 })),

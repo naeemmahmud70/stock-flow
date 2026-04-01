@@ -19,7 +19,7 @@ const ActivityLogSchema = new Schema<IActivityLog>(
     userName: { type: String, required: true },
     metadata: { type: Schema.Types.Mixed },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 ActivityLogSchema.index({ createdAt: -1 });

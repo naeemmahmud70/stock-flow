@@ -23,25 +23,10 @@ import {
   Clock,
   ArrowRight,
 } from "lucide-react";
-import { getUserToken } from "@/lib/auth";
-import { useAuthStore } from "@/store/useAuthStore";
 
 export default function Dashboard() {
-  const { logout } = useAuthStore();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = getUserToken();
-    console.log("token", token);
-
-    const checkUser = async () => {
-      if (!token) {
-        await logout();
-      }
-    };
-    checkUser();
-  }, []);
 
   useEffect(() => {
     fetch("/api/dashboard")

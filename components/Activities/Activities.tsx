@@ -163,14 +163,16 @@ export default function Activities() {
             </div>
           ))}
 
-          <div className="sf-card px-5 py-3">
-            <Pagination
-              page={page}
-              pages={pages}
-              total={total}
-              onPage={setPage}
-            />
-          </div>
+          {pages <= 1 ? null : (
+            <div className="sf-card px-5 py-3">
+              <Pagination
+                page={page}
+                pages={pages}
+                total={total}
+                onPage={setPage}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

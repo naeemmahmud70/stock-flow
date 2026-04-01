@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Package, Eye, EyeOff, Zap, AlertCircle } from "lucide-react";
 
-const DEMO_EMAIL = "demo@stockflow.dev";
-const DEMO_PASSWORD = "demo1234";
+const DEMO_EMAIL = "naeemmahmud370@gmail.com";
+const DEMO_PASSWORD = "N@eem123";
 
 export default function LoginPage() {
   const router = useRouter();

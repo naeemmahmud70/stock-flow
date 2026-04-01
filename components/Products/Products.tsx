@@ -33,7 +33,7 @@ function ProductForm({
     name: initial?.name ?? "",
     category:
       typeof initial?.category === "object"
-        ? (initial.category as Category)._id
+        ? (initial?.category as Category)._id
         : (initial?.category ?? ""),
     price: initial?.price ?? 0,
     stock: initial?.stock ?? 0,

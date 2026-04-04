@@ -288,7 +288,6 @@ export default function Orders() {
     order: Order;
     status: string;
   } | null>(null);
-  const [toggle, setToggle] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -310,13 +309,7 @@ export default function Orders() {
           <h2 className="text-base font-semibold text-slate-800">Orders</h2>
           <p className="text-xs text-slate-400">{total} total orders</p>
         </div>
-        <button
-          onClick={() => {
-            setShowCreate(true);
-            setToggle((toggle) => !toggle);
-          }}
-          className="sf-btn-primary"
-        >
+        <button onClick={() => setShowCreate(true)} className="sf-btn-primary">
           <Plus className="w-4 h-4" /> New order
         </button>
       </div>

@@ -20,7 +20,7 @@ import {
   Trash2,
   ChevronDown,
   X,
-  PlusCircle,
+  PlusIcon,
 } from "lucide-react";
 
 const STATUS_FLOW: Record<string, string[]> = {
@@ -47,7 +47,7 @@ function CreateOrderModal({
   onSuccess: () => void;
 }) {
   const { createOrder } = useOrderStore();
-  const { products, fetchProducts } = useProductStore();
+  const { products, fetchProducts, fetchCategories } = useProductStore();
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [notes, setNotes] = useState("");
@@ -59,9 +59,8 @@ function CreateOrderModal({
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
-
-  const activeProducts = products.filter((p) => p.status === "active");
 
   const addItem = () => {
     const product = products.find((p) => p._id === selectedProductId);
@@ -172,13 +171,10 @@ function CreateOrderModal({
             onChange={(e) => setSelectedProductId(e.target.value)}
           >
             <option value="">Select a product…</option>
-            {activeProducts.map((p) => (
-              <option
-                key={p._id}
-                value={p._id}
-                disabled={lines.some((l) => l.productId === p._id)}
-              >
-                {p.name} — {formatCurrency(p.price)} ({p.stock} in stock)
+            {products.map((p) => (
+              <option key={p._id} value={p._id}>
+                {p.name} — {formatCurrency(p.price)} (
+                {p.stock < 1 ? "out of stock" : `${p.stock} in stock`})
               </option>
             ))}
           </select>
@@ -195,7 +191,8 @@ function CreateOrderModal({
             disabled={!selectedProductId}
             className="sf-btn-primary text-xs px-3"
           >
-            <PlusCircle className="w-3.5 h-3.5" />
+            Add
+            <PlusIcon className="w-3.5 h-3.5" />
           </button>
         </div>
 
@@ -357,7 +354,7 @@ export default function Orders() {
       </div>
 
       {/* Table */}
-      <div className="sf-card overflow-hidden">
+      <div className="sf-card ">
         {isLoading ? (
           <div className="flex justify-center py-12">
             <Spinner />
@@ -377,7 +374,7 @@ export default function Orders() {
             }
           />
         ) : (
-          <div className="overflow-x-auto">
+          <div className="">
             <table className="sf-table">
               <thead>
                 <tr>

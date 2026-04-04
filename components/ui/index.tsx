@@ -171,7 +171,7 @@ interface PaginationProps { page: number; pages: number; total: number; onPage: 
 export function Pagination({ page, pages, total, onPage }: PaginationProps) {
   if (pages <= 1) return null;
   return (
-    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+    <div className="flex items-center justify-between py-1">
       <p className="text-xs text-slate-500">{total} total results</p>
       <div className="flex items-center gap-1">
         <button onClick={() => onPage(page - 1)} disabled={page === 1} className="sf-btn-secondary px-2 py-1 text-xs disabled:opacity-40">← Prev</button>

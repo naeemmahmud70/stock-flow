@@ -1,6 +1,6 @@
 # StockFlow — Smart Inventory & Order Management
 
-A full-stack Next.js 14 application for managing products, stock levels, customer orders, and fulfillment workflows.
+A full-stack Next.js 14 application for managing products, stock levels, customer orders, and fulfillment workflows. 
 Live link: https://stock-flow-sandy.vercel.app/
 
 ## Tech Stack

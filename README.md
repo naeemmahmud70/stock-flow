@@ -1,6 +1,7 @@
 # StockFlow — Smart Inventory & Order Management
 
 A full-stack Next.js 14 application for managing products, stock levels, customer orders, and fulfillment workflows.
+Live link: https://stock-flow-sandy.vercel.app/
 
 ## Tech Stack
 
@@ -57,7 +58,7 @@ JWT_EXPIRES_IN=7d
 npm run dev
 ```
 
-Open [https://stock-flow-sandy.vercel.app/](https://stock-flow-sandy.vercel.app/) — you'll be redirected to `/login`.
+Open [http://localhost:3000/](http://localhost:3000/) — you'll be redirected to `/login`.
 
 ### 4. Demo login
 

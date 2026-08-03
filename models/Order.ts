@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import { Counter } from "./Counter";
 
 export interface IOrderItem {
   product: mongoose.Types.ObjectId;
@@ -52,8 +53,12 @@ const OrderSchema = new Schema<IOrder>(
 
 OrderSchema.pre("save", async function (next) {
   if (!this.orderNumber) {
-    const count = await mongoose.model("Order").countDocuments();
-    this.orderNumber = `SF-${String(count + 1001).padStart(4, "0")}`;
+    const counter = await Counter.findByIdAndUpdate(
+      "orderNumber",
+      { $inc: { seq: 4 } },
+      { new: true, upsert: true },
+    );
+    this.orderNumber = `SF-${String(counter.seq).padStart(4, "0")}`;
   }
   next();
 });
